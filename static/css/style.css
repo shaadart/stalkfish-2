@@ -1,0 +1,24 @@
+body { font-family: sans-serif; padding: 20px; }
+#board { width: 400px; margin-top: 20px; }
+#info  { margin-top: 10px; font-size: 18px; }
+textarea { font-family: monospace; }
+
+/* Make each square a positioning context */
+.square-55d63 {
+  position: relative;
+}
+
+/* The little tag above the piece */
+.annotation {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.8);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}

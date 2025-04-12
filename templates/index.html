@@ -5,89 +5,24 @@
   <title>Chess PGN Analyzer</title>
   <link rel="stylesheet"
         href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    #board { width: 400px; margin-top: 20px; }
-    #info  { margin-top: 10px; font-size: 18px; }
-    textarea { font-family: monospace; }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <h1>Chess PGN Analyzer</h1>
-
   <form id="pgnForm">
     <textarea name="pgn" rows="10" cols="60"
-      placeholder="Paste PGN here (including headers)…"></textarea><br>
+      placeholder="Paste PGN here…"></textarea><br>
     <button type="submit">Analyze</button>
   </form>
 
   <div id="board"></div>
   <div id="info"></div>
 
-  <!-- 1) jQuery -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <!-- 2) chess.js (game logic) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-  <!-- 3) chessboard.js (board UI) -->
   <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-
-  <script>
-    let board, game, analysis = [], moveIndex = 0;
-  
-    $(function() {
-      game = new Chess();
-      board = Chessboard('board', {
-        position: 'start',
-        pieceTheme: 'https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/dist/img/chesspieces/wikipedia/{piece}.png'
-      });
-    
-    });
-
-    function showMove(i) {
-      game.reset();
-      for (let j = 0; j <= i; j++) game.move(analysis[j].san);
-      board.position(game.fen());
-      const a = analysis[i];
-      $('#info').text(`Move ${i+1}: ${a.san} | Eval: ${a.eval} | ${a.tag}`);
-    }
-
-    $('#pgnForm').on('submit', function(e) {
-      e.preventDefault();
-      $.ajax({
-        url: '/analyze',
-        method: 'POST',
-        data: $(this).serialize(),
-        dataType: 'json'
-      })
-      .done(function(data) {
-        if (data.error) {
-          alert("Server error: " + data.error);
-          console.error("Error payload:", data);
-          return;
-        }
-        analysis = data;
-        moveIndex = 0;
-        showMove(0);
-      })
-      .fail(function(xhr, status, err) {
-        let msg = xhr.responseText || err;
-        try {
-          const j = JSON.parse(xhr.responseText);
-          msg = j.error || JSON.stringify(j);
-        } catch {}
-        console.error("XHR failed:", status, err, "\nResponse:", xhr.responseText);
-        alert(`Analyze failed (HTTP ${xhr.status}):\n${msg}`);
-      });
-    });
-
-    $(document).on('keydown', function(e) {
-      if (e.key === 'ArrowRight' && moveIndex < analysis.length - 1) {
-        moveIndex++; showMove(moveIndex);
-      }
-      else if (e.key === 'ArrowLeft' && moveIndex > 0) {
-        moveIndex--; showMove(moveIndex);
-      }
-    });
-  </script>
+  <script src="{{ url_for('static', filename='js/board.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/analyze.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
 </body>
 </html>
