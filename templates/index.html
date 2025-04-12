@@ -15,7 +15,39 @@
     <button type="submit">Analyze</button>
   </form>
 
-  <div id="board"></div>
+  <div id="container">
+    <div id="moves-list" class="moves-column">
+      <h2>Moves</h2>
+      <ul id="moves-list-container"></ul>
+    </div>
+
+    <div id="board"></div>
+  </div>
+
+  <div id="summary-screen" style="display: none;">
+    <h2>Game Summary</h2>
+    <div id="accuracy">
+      <p>Accuracy:</p>
+      <div id="accuracy-values">
+        <span id="white-accuracy">White: 0%</span>
+        <span id="black-accuracy">Black: 0%</span>
+      </div>
+    </div>
+    <div id="move-types">
+      <p>Move Types:</p>
+      <ul>
+        <li>Brilliant Moves: <span id="brilliant-count">0</span></li>
+        <li>Great Moves: <span id="great-count">0</span></li>
+        <li>Best Moves: <span id="best-count">0</span></li>
+        <li>Good Moves: <span id="good-count">0</span></li>
+        <li>Inaccuracies: <span id="inaccuracy-count">0</span></li>
+        <li>Mistakes: <span id="mistake-count">0</span></li>
+        <li>Blunders: <span id="blunder-count">0</span></li>
+      </ul>
+    </div>
+    <button id="start-review">Start Review</button>
+  </div>
+
   <div id="info"></div> 
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

@@ -12,7 +12,7 @@ textarea { font-family: monospace; }
 .annotation {
   position: absolute;
   top: -10px;
-  left: 50%;
+  left: 40%;
   transform: translateX(-50%);
   background: rgba(255,255,255,0.8);
   padding: 2px 4px;
@@ -21,4 +21,166 @@ textarea { font-family: monospace; }
   pointer-events: none;
   white-space: nowrap;
   box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+/* Annotation styles */
+.annotation.best-move {
+  background: rgba(0, 255, 0); /* Light green */
+  color: green;
+  border: 1px solid green;
+  font-weight: bold;
+}
+
+.annotation.inaccuracy {
+  background: rgba(255, 255, 0); /* Light yellow */
+  color: goldenrod;
+  border: 1px solid goldenrod;
+}
+
+.annotation.mistake {
+  background: rgba(255, 165, 0); /* Light orange */
+  color: orange;
+  border: 1px solid orange;
+}
+
+.annotation.blunder {
+  background: rgba(255, 0, 0); /* Light red */
+  color: red;
+  border: 1px solid red;
+  font-weight: bold;
+}
+
+/* Annotation styles with symbols */
+.annotation.best-move::before {
+  content: '★'; /* Green star */
+  color: green;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.annotation.inaccuracy::before {
+  content: '!?'; /* Yellow question mark and exclamation */
+  color: goldenrod;
+  font-size: 14px;
+}
+
+.annotation.mistake::before {
+  content: '?'; /* Orange question mark */
+  color: rgb(123, 53, 0);
+  font-size: 14px;
+} 
+
+.annotation.blunder::before {
+  content: '??'; /* Red double question marks */
+  color: rgb(255, 234, 234);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+#container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+#board {
+  flex: 0 0 auto;
+  margin: 0 20px;
+}
+
+.moves-column {
+  flex: 1;
+  max-width: 200px;
+}
+
+.moves-column h2 {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.moves-column ul {
+  list-style: none;
+  padding: 0;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.moves-column ul li {
+  margin-bottom: 5px;
+}
+
+#moves-list-container {
+  list-style: none;
+  padding: 0;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+#moves-list-container li {
+  margin-bottom: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#moves-list-container li:hover {
+  background-color: #f0f0f0;
+}
+
+.move-annotation {
+  margin-left: 10px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.move-eval {
+  margin-left: 10px;
+  font-size: 12px;
+  color: gray;
+}
+
+#summary-screen {
+  text-align: center;
+  margin-top: 20px;
+}
+
+#accuracy {
+  margin-bottom: 20px;
+}
+
+#accuracy-values {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#move-types ul {
+  list-style: none;
+  padding: 0;
+  font-size: 16px;
+}
+
+#move-types ul li {
+  margin-bottom: 10px;
+}
+
+#start-review {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#start-review:hover {
+  background-color: #45a049;
 }

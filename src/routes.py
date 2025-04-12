@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
-from analyzer import analyze_pgn
+from src.analyzer import analyze_pgn
+import traceback
 
 bp = Blueprint("main", __name__)
 
@@ -9,11 +10,12 @@ def index():
 
 @bp.route("/analyze", methods=["POST"])
 def analyze_route():
-    pgn_text = request.form.get("pgn", "")
+    pgn = request.form.get("pgn", "")
     try:
-        analysis = analyze_pgn(pgn_text)
-        return jsonify(analysis)
+        data = analyze_pgn(pgn)
+        return jsonify(data)
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
