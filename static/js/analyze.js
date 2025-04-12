@@ -20,15 +20,17 @@ function showMove(i) {
     switch (a.tag) {
       case 'Best Move':
         annotationClass = 'best-move';
+        $('#better-move').hide(); // Hide better move recommendation
         break;
       case 'Inaccuracy':
-        annotationClass = 'inaccuracy';
-        break;
       case 'Mistake':
-        annotationClass = 'mistake';
-        break;
       case 'Blunder':
-        annotationClass = 'blunder';
+        annotationClass = a.tag.toLowerCase();
+        $('#better-move').show(); // Show better move recommendation
+        $('#better-move').html(`
+          <h3>Better Move Recommendation</h3>
+          <p>Recommended Move: <span>${a.recommended || 'N/A'}</span></p>
+        `);
         break;
     }
     sq.append(`<div class="annotation ${annotationClass}"></div>`);

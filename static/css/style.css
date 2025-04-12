@@ -184,3 +184,31 @@ textarea { font-family: monospace; }
 #start-review:hover {
   background-color: #45a049;
 }
+
+#better-move {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#better-move h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #007BFF;
+}
+
+#better-move p {
+  font-weight: bold;
+  font-size: 18px;
+  color: #28a745;
+}
+
+#better-move p span {
+  color: #dc3545;
+  font-weight: normal;
+}
