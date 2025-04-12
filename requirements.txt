@@ -1,2 +1,2 @@
-Flask>=2.0
-python-chess>=1.7
+flask
+python-chess
