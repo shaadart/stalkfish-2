@@ -1,8 +1,17 @@
 import os
+import platform
 
 # src/config.py
 BASE_DIR     = os.path.dirname(__file__)  # .../your‑project/src
-ENGINE_PATH  = os.path.abspath(
-    os.path.join(BASE_DIR, os.pardir, "stockfish.exe")
-)
+
+# Dynamically select the Stockfish binary based on the operating system
+if platform.system() == "Windows":
+    ENGINE_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../stockfish.exe")
+    )
+else:
+    ENGINE_PATH = os.path.abspath(
+        os.path.join(BASE_DIR, "../stockfish/stockfish-ubuntu-x86-64-avx512")
+    )
+
 ENGINE_DEPTH = 15
