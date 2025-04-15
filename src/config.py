@@ -15,3 +15,4 @@ else:
     )
 
 ENGINE_DEPTH = 15
+ENGINE_TIME_MS = 1000  # Default time in milliseconds for engine calculations
