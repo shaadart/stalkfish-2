@@ -1,6 +1,4 @@
-
-![image](https://github.com/user-attachments/assets/53b8010c-284a-47f2-b7ae-46e2a64637c9)
-
+![alt text](image.png)
 
 # Stalkfish‑2
 A free, Flask‑powered PGN analyzer to give your chess game all the love it deserves

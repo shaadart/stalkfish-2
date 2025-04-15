@@ -1,7 +1,73 @@
-body { font-family: sans-serif; padding: 20px; }
-#board { width: 400px; margin-top: 20px; }
-#info  { margin-top: 10px; font-size: 18px; }
-textarea { font-family: monospace; }
+/* Base page styles */
+body {
+  font-family: sans-serif;
+  padding: 20px;
+}
+textarea {
+  font-family: monospace;
+}
+
+/* Chessboard container */
+#board {
+  width: 50%;
+  margin-top: 5%;
+}
+
+/* Info bar */
+#info {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+/* Better‑move panel */
+#better-move {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+#better-move h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #007BFF;
+}
+#better-move p {
+  font-weight: bold;
+  font-size: 18px;
+  color: #28a745;
+}
+#better-move p span {
+  color: #dc3545;
+  font-weight: normal;
+}
+
+/* Screen visibility helper */
+.screen {
+  display: none;
+}
+.screen.active {
+  display: block;
+}
+
+/* Main container flex layout */
+#container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+#board {
+  flex: 0 0 auto;
+  margin-right: 20px;
+}
+
+/* -------------------------------
+   Annotation (piece badge) CSS
+   ------------------------------- */
 
 /* Make each square a positioning context */
 .square-55d63 {
@@ -23,133 +89,179 @@ textarea { font-family: monospace; }
   box-shadow: 0 0 2px rgba(0,0,0,0.3);
 }
 
-/* Annotation styles */
+/* Core annotation styles */
 .annotation.best-move {
-  background: rgba(0, 255, 0); /* Light green */
+  background: rgba(0,255,0,0.8);
   color: green;
   border: 1px solid green;
   font-weight: bold;
 }
-
-.annotation.inaccuracy {
-  background: rgba(255, 255, 0); /* Light yellow */
-  color: goldenrod;
-  border: 1px solid goldenrod;
-}
-
-.annotation.mistake {
-  background: rgba(255, 165, 0); /* Light orange */
-  color: orange;
-  border: 1px solid orange;
-}
-
-.annotation.blunder {
-  background: rgba(255, 0, 0); /* Light red */
-  color: red;
-  border: 1px solid red;
-  font-weight: bold;
-}
-
-/* Annotation styles with symbols */
 .annotation.best-move::before {
-  content: '★'; /* Green star */
+  content: '★';
   color: green;
   font-size: 16px;
   font-weight: bold;
 }
 
-.annotation.inaccuracy::before {
-  content: '!?'; /* Yellow question mark and exclamation */
-  color: goldenrod;
+.annotation.excellent-move {
+  background: rgba(0,200,200,0.8);
+  color: teal;
+}
+.annotation.excellent-move::before {
+  content: '✓';
   font-size: 14px;
 }
 
-.annotation.mistake::before {
-  content: '?'; /* Orange question mark */
-  color: rgb(123, 53, 0);
+.annotation.good-move {
+  background: lime;
+  color: green;
+}
+.annotation.good-move::before {
+  content: '✓';
   font-size: 14px;
-} 
+}
 
+.annotation.inaccuracy {
+  background: rgba(255,255,0,0.8);
+  color: goldenrod;
+  border: 1px solid goldenrod;
+}
+.annotation.inaccuracy::before {
+  content: '!?';
+  color: rgb(93,67,0);
+  font-size: 14px;
+}
+
+.annotation.mistake {
+  background: rgba(255,165,0,0.8);
+  color: orange;
+  border: 1px solid orange;
+}
+.annotation.mistake::before {
+  content: '?';
+  color: rgb(54,23,0);
+  font-size: 14px;
+}
+
+.annotation.blunder {
+  background: rgba(255,0,0,0.8);
+  color: red;
+  border: 1px solid red;
+  font-weight: bold;
+}
 .annotation.blunder::before {
-  content: '??'; /* Red double question marks */
-  color: rgb(255, 234, 234);
+  content: '??';
+  color: rgb(255,234,234);
   font-size: 14px;
   font-weight: bold;
 }
 
-
-#container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 20px;
-}
-
-#board {
-  flex: 0 0 auto;
-  margin: 0 20px;
-}
-
-.moves-column {
-  flex: 1;
-  max-width: 200px;
-}
-
-.moves-column h2 {
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.moves-column ul {
-  list-style: none;
-  padding: 0;
-  font-family: monospace;
-  font-size: 14px;
-}
-
-.moves-column ul li {
-  margin-bottom: 5px;
-}
-
-#moves-list-container {
-  list-style: none;
-  padding: 0;
-  font-family: monospace;
-  font-size: 14px;
-}
-
-#moves-list-container li {
-  margin-bottom: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-#moves-list-container li:hover {
-  background-color: #f0f0f0;
-}
-
-.move-annotation {
-  margin-left: 10px;
-  font-size: 12px;
-  display: inline-block;
-}
-
-.move-eval {
-  margin-left: 10px;
-  font-size: 12px;
+/* Special tags */
+.annotation.book {
+  background: rgba(200,200,200,0.8);
   color: gray;
 }
+.annotation.book::before {
+  content: '📚';
+  font-size: 14px;
+}
+
+.annotation.brilliant-move {
+  background: gold;
+  color: darkorange;
+}
+.annotation.brilliant-move::before {
+  content: '!!';
+  font-size: 16px;
+}
+
+.annotation.great-move {
+  background: rgba(0,150,255,0.8);
+  color: blue;
+}
+.annotation.great-move::before {
+  content: '!';
+  font-size: 16px;
+}
+
+.annotation.miss {
+  background: rgb(255,229,192);
+  color: crimson;
+}
+.annotation.miss::before {
+  content: '✗';
+  font-size: 14px;
+  color: rgb(93,67,0);
+}
+
+.annotation.opening-move {
+  background: rgba(200,200,200,0.8);
+  color: gray;
+}
+.annotation.opening-move::before {
+  content: '⏳';
+  font-size: 14px;
+}
+
+/* -------------------------------
+   Moves‑table styles
+   ------------------------------- */
+
+#moves-table {
+  flex: 1;
+  margin-left: 20px;
+}
+
+#moves-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#moves-table th,
+#moves-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+#moves-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+/* Move cells */
+#moves-table td.move-cell {
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+#moves-table td.move-cell:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+/* Highlight current move */
+#moves-table td.selected {
+  background-color: #e0f7fa;
+  font-weight: bold;
+}
+
+/* SAN and eval inside cells */
+#moves-table .san {
+  margin-right: 4px;
+}
+#moves-table .eval {
+  margin-left: 4px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+/* -------------------------------
+   Summary screen styles
+   ------------------------------- */
 
 #summary-screen {
   text-align: center;
   margin-top: 20px;
-}
-
-#accuracy {
-  margin-bottom: 20px;
 }
 
 #accuracy-values {
@@ -158,18 +270,22 @@ textarea { font-family: monospace; }
   gap: 20px;
   font-size: 18px;
   font-weight: bold;
+  margin-bottom: 20px;
 }
 
+#move-types {
+  margin-bottom: 20px;
+}
 #move-types ul {
   list-style: none;
   padding: 0;
+}
+#move-types ul li {
+  margin: 5px 0;
   font-size: 16px;
 }
 
-#move-types ul li {
-  margin-bottom: 10px;
-}
-
+/* Start Review button */
 #start-review {
   margin-top: 20px;
   padding: 10px 20px;
@@ -180,35 +296,6 @@ textarea { font-family: monospace; }
   border-radius: 5px;
   cursor: pointer;
 }
-
 #start-review:hover {
   background-color: #45a049;
-}
-
-#better-move {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 16px;
-  color: #333;
-  background-color: #f9f9f9;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#better-move h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #007BFF;
-}
-
-#better-move p {
-  font-weight: bold;
-  font-size: 18px;
-  color: #28a745;
-}
-
-#better-move p span {
-  color: #dc3545;
-  font-weight: normal;
 }

@@ -11,6 +11,7 @@ class EngineManager:
         if not os.path.exists(ENGINE_PATH):
             raise FileNotFoundError(f"Stockfish not found at {ENGINE_PATH!r}")
         try:
+            logging.info(f"Initializing Stockfish engine at {ENGINE_PATH}")
             self.engine = chess.engine.SimpleEngine.popen_uci(ENGINE_PATH)
             logging.info("Stockfish engine started successfully.")
         except Exception as e:
