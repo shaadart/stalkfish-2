@@ -1,23 +1,9 @@
 /* Base page styles */
-body {
-  font-family: sans-serif;
-  padding: 20px;
-}
-textarea {
-  font-family: monospace;
-}
+body { font-family: sans-serif; padding: 20px; }
+#board { width: 400px; margin-top: 20px; }
+#info  { margin-top: 10px; font-size: 18px; }
+textarea { font-family: monospace; }
 
-/* Chessboard container */
-#board {
-  width: 50%;
-  margin-top: 5%;
-}
-
-/* Info bar */
-#info {
-  margin-top: 10px;
-  font-size: 18px;
-}
 
 /* Better‑move panel */
 #better-move {
@@ -78,20 +64,20 @@ textarea {
 .annotation {
   position: absolute;
   top: -10px;
-  left: 40%;
+  left: 50%;
   transform: translateX(-50%);
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   padding: 2px 4px;
-  border-radius: 100%;
+  border-radius: 50%;
   font-size: 12px;
   pointer-events: none;
   white-space: nowrap;
-  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Core annotation styles */
 .annotation.best-move {
-  background: rgba(0,255,0,0.8);
+  background: rgba(0,255,0);
   color: green;
   border: 1px solid green;
   font-weight: bold;
@@ -104,12 +90,12 @@ textarea {
 }
 
 .annotation.excellent-move {
-  background: rgba(0,200,200,0.8);
+  background: rgb(0, 200, 33);
   color: teal;
 }
 .annotation.excellent-move::before {
   content: '✓';
-  font-size: 14px;
+  font-size: 14pqx;
 }
 
 .annotation.good-move {
@@ -122,7 +108,7 @@ textarea {
 }
 
 .annotation.inaccuracy {
-  background: rgba(255,255,0,0.8);
+  background: rgba(255,255,0);
   color: goldenrod;
   border: 1px solid goldenrod;
 }
@@ -133,7 +119,7 @@ textarea {
 }
 
 .annotation.mistake {
-  background: rgba(255,165,0,0.8);
+  background: rgba(255,165,0);
   color: orange;
   border: 1px solid orange;
 }
@@ -144,7 +130,7 @@ textarea {
 }
 
 .annotation.blunder {
-  background: rgba(255,0,0,0.8);
+  background: rgba(255,0,0);
   color: red;
   border: 1px solid red;
   font-weight: bold;
@@ -158,7 +144,7 @@ textarea {
 
 /* Special tags */
 .annotation.book {
-  background: rgba(200,200,200,0.8);
+  background: rgba(200,200,200);
   color: gray;
 }
 .annotation.book::before {
@@ -176,7 +162,7 @@ textarea {
 }
 
 .annotation.great-move {
-  background: rgba(0,150,255,0.8);
+  background: rgba(0,150,255);
   color: blue;
 }
 .annotation.great-move::before {
@@ -195,12 +181,24 @@ textarea {
 }
 
 .annotation.opening-move {
-  background: rgba(200,200,200,0.8);
+  background: rgba(200,200,200);
   color: gray;
 }
 .annotation.opening-move::before {
   content: '⏳';
   font-size: 14px;
+}
+
+/* Add fallback styles for undefined annotation types */
+.annotation.undefined {
+  background: rgba(200, 200, 200);
+  color: gray;
+  border: 1px dashed gray;
+}
+.annotation.undefined::before {
+  content: '?';
+  font-size: 14px;
+  color: gray;
 }
 
 /* -------------------------------
