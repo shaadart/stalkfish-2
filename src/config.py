@@ -9,5 +9,6 @@ if platform.system() == "Windows":
 else:
     ENGINE_PATH = os.path.abspath(os.path.join(BASE_DIR, "../stockfish"))
 
-ENGINE_DEPTH   = 15
-ENGINE_TIME_MS = 1000  # milliseconds per position
+    
+ENGINE_DEPTH = 15
+ENGINE_TIME_MS = 1000  # Default time in milliseconds for engine calculations
