@@ -1,4 +1,4 @@
-![alt text](image.png)
+![alt text](image-1.png)
 
 # Stalkfish‑2
 A free, Flask‑powered PGN analyzer to give your chess game all the love it deserves
