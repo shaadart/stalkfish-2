@@ -6,4 +6,6 @@ app.register_blueprint(bp)
 
 # For local dev
 if __name__ == "__main__":
-    app.run()
+    app.run(
+        debug=True,
+    )

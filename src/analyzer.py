@@ -1,37 +1,51 @@
-import io, os, logging
-import chess, chess.pgn, chess.polyglot
+import io
+import os
+import logging
+
+import chess
+import chess.pgn
+import chess.polyglot
 from chess.engine import Limit
+
 from src.engine_manager import EngineManager
 from src.config import ENGINE_DEPTH, ENGINE_TIME_MS
 
-# Classification V2 thresholds
-EP_THRESHOLDS = [
-    ("Best",      0.00, 0.00),
-    ("Excellent", 0.00, 0.02),
-    ("Good",      0.02, 0.05),
-    ("Inaccuracy",0.05, 0.10),
-    ("Mistake",   0.10, 0.20),
-    ("Blunder",   0.20, 1.00),
+# Updated centipawn loss thresholds
+CP_THRESHOLDS = [
+    ("Best", 0, 20),
+    ("Excellent", 20, 50),
+    ("Good", 50, 100),
+    ("Inaccuracy", 100, 200),
+    ("Mistake", 200, 300),
+    ("Blunder", 300, float('inf')),
 ]
 
-# Optional opening book
-BOOK_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                         os.pardir, "book.bin"))
+PIECE_VALUES = {
+    chess.PAWN: 1,
+    chess.KNIGHT: 3,
+    chess.BISHOP: 3,
+    chess.ROOK: 5,
+    chess.QUEEN: 9,
+}
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(levelname)s %(message)s')
+BOOK_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), os.pardir, "book.bin")
+)
 
-def cp_to_ep(cp: int, rating_diff: float=0) -> float:
-    """
-    Approximate Chess.com's data‐driven mapping:
-    logistic((cp/100) + (rating_diff/400))
-    """
-    x = (cp or 0)/100 + rating_diff/400
-    return 1 / (1 + 10**(-x))
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s - %(message)s'
+)
 
-def classify_ep_lost(ep_lost: float):
-    for tag, lo, hi in EP_THRESHOLDS:
-        if lo <= ep_lost <= hi:
+def cp_to_ep(cp: int) -> float:
+    """Convert centipawns to expected points without Elo adjustment."""
+    x = (cp or 0) / 100
+    return 1 / (1 + 10 ** (-x))
+
+def classify_cp_lost(cp_lost: float) -> str:
+    """Classify move based on centipawn loss."""
+    for tag, lo, hi in CP_THRESHOLDS:
+        if lo <= cp_lost < hi:
             return tag
     return "Unknown"
 
@@ -40,97 +54,120 @@ def analyze_pgn(pgn_text: str):
     if game is None:
         raise ValueError("Could not parse PGN")
 
-    # extract ratings from headers (fallback to 1500)
-    wr = int(game.headers.get("WhiteElo", 1500))
-    br = int(game.headers.get("BlackElo", 1500))
-
     board = game.board()
     engine = EngineManager()
 
-    # set MultiPV=2 so we get top-2 lines
-    engine.configure({"MultiPV": 2})
-
-    # optional polyglot book
     book = None
     if os.path.exists(BOOK_PATH):
         book = chess.polyglot.open_reader(BOOK_PATH)
+        logging.info("Opening book loaded")
 
     result = []
     last_tag = None
 
     for move in game.mainline_moves():
-        # 1) before‐move analysis
-        info_list = engine.analyze(board,
+        # 1. BEFORE MOVE ANALYSIS
+        infos = engine.analyze(
+            board,
             Limit(depth=ENGINE_DEPTH, time=ENGINE_TIME_MS),
             multipv=2
         )
-        best_info = info_list[0]
-        cp_before = best_info["score"].white().score(mate_score=10000)
-        ep_before = cp_to_ep(cp_before,
-            (wr-br) if board.turn else (br-wr)
-        )
-
-        # recommended = SAN of engine’s #1 move
+        best_info = infos[0]
+        cp_b = best_info["score"].white().score(mate_score=10000)
+        ep_b = cp_to_ep(cp_b)
         rec_move = best_info.get("pv", [None])[0]
-        rec_san  = board.san(rec_move) if rec_move else None
+        rec_san = board.san(rec_move) if rec_move else None
 
-        # prepare metadata
-        san      = board.san(move)
+        san = board.san(move)
         uci_from = chess.square_name(move.from_square)
-        uci_to   = chess.square_name(move.to_square)
-        in_book  = False
+        uci_to = chess.square_name(move.to_square)
+
+        in_book = False
         if book:
             try:
-                e = book.find(board)
-                in_book = (e.move == move)
+                entry = book.find(board)
+                in_book = (entry.move == move)
             except:
                 pass
 
-        mat_before = sum(len(board.pieces(pt, board.turn))*val
-                         for pt,val in PIECE_VALUES.items())
+        mat_before = sum(
+            len(board.pieces(pt, board.turn)) * v
+            for pt, v in PIECE_VALUES.items()
+        )
 
         board.push(move)
 
-        # 2) after‐move analysis
-        info_after = engine.analyze(board,
-            Limit(depth=ENGINE_DEPTH, time=ENGINE_TIME_MS)
-        )
-        cp_after = info_after["score"].white().score(mate_score=10000)
-        ep_after = cp_to_ep(cp_after,
-            (wr-br) if not board.turn else (br-wr)
+        # 2. AFTER MOVE ANALYSIS
+        info_a = engine.analyze(
+            board,
+            Limit(depth=ENGINE_DEPTH, time=ENGINE_TIME_MS),
+            multipv=1
         )
 
-        mat_after = sum(len(board.pieces(pt, not board.turn))*val
-                        for pt,val in PIECE_VALUES.items())
+        if isinstance(info_a, list):
+            if len(info_a) == 0:
+                raise ValueError("Empty analysis results")
+            best_info_a = info_a[0]
+            cp_a = best_info_a["score"].white().score(mate_score=10000)
+        elif isinstance(info_a, dict):
+            cp_a = info_a["score"].white().score(mate_score=10000)
+        else:
+            raise ValueError("Unexpected analysis format")
 
-        ep_lost = max(0, ep_before - ep_after)
-        base_tag = classify_ep_lost(ep_lost)
+        ep_a = cp_to_ep(cp_a)
+        cp_lost = max(0.0, (cp_b - cp_a) / 100)  # Convert to pawn units
 
-        # 3) special overrides
+        mat_after = sum(
+            len(board.pieces(pt, not board.turn)) * v
+            for pt, v in PIECE_VALUES.items()
+        )
+
+        base_tag = classify_cp_lost(cp_lost * 100)  # Convert back to centipawns
+
+        # Determine special tags
         tag = base_tag
         if in_book:
             tag = "Book"
-        elif (base_tag == "Best" and san == rec_san
-              and mat_after < mat_before and ep_after >= ep_before):
-            tag = "Brilliant"
-        elif ep_before < 0.5 and ep_after >= 0.5:
+        elif rec_san == san:
+            if mat_after < mat_before and ep_a >= ep_b:
+                tag = "Brilliant"
+            elif cp_lost * 100 <= 20:
+                tag = "Best"
+            elif cp_lost * 100 <= 50:
+                tag = "Excellent"
+            else:
+                tag = "Good"
+        elif ep_b < 0.5 and ep_a >= 0.5:
             tag = "Great"
-        elif last_tag in ("Mistake","Blunder") and base_tag != "Best":
+        elif last_tag in ("Mistake", "Blunder") and base_tag not in ("Best", "Excellent", "Good"):
             tag = "Miss"
 
         result.append({
-            "san":         san,
-            "from":        uci_from,
-            "to":          uci_to,
-            "ep_before":   round(ep_before,3),
-            "ep_after":    round(ep_after,3),
-            "ep_lost":     round(ep_lost,3),
+            "san": san,
+            "from": uci_from,
+            "to": uci_to,
+            "cp_before": round(cp_b/100, 1),  # In pawn units
+            "cp_after": round(cp_a/100, 1),
+            "cp_lost": round(cp_lost, 1),
+            "ep_before": round(ep_b, 3),
+            "ep_after": round(ep_a, 3),
             "recommended": rec_san,
-            "tag":         tag
+            "tag": tag
         })
 
         last_tag = tag
 
-    if book: book.close()
+    for move_data in result:
+        logging.debug(
+            f"Move: {move_data['san']}, From: {move_data['from']}, To: {move_data['to']}, "
+            f"CP Before: {move_data['cp_before']}, CP After: {move_data['cp_after']}, "
+            f"CP Lost: {move_data['cp_lost']}, EP Before: {move_data['ep_before']}, "
+            f"EP After: {move_data['ep_after']}, Recommended: {move_data['recommended']}, "
+            f"Tag: {move_data['tag']}"
+        )
+
+    if book:
+        book.close()
     engine.close()
+
     return result
