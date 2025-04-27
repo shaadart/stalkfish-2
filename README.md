@@ -24,6 +24,7 @@ no Diamond subscription needed! 💋♟️
 5. **Play**  
    Open your browser at [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
+<a href="https://imgflip.com/i/9s2iq9"><img src="https://i.imgflip.com/9s2iq9.jpg" title="made at imgflip.com"/></a><div><a href="https://imgflip.com/memegenerator">from Imgflip Meme Generator</a></div>
 ## 💡 Under Development
 
 - Live engine evaluations
